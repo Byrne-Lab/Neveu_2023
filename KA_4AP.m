@@ -1,7 +1,7 @@
 
 % folder = 'Data\';% the 
 
-folder = 'D:\Data\2019\';
+folder = 'C:\Users\cneveu\Documents\Data\';
 
 neuron = ["B51","B64","B8"];
 info=cell(1,3);
@@ -26,16 +26,6 @@ for n=1:length(neuron)
     sel = command{n}(1,:)>=vrange(1) & command{n}(1,:)<=vrange(2);
     command{n} = command{n}(:,sel);
     data{n}(:,:,~sel,:,:) = [];
-    
-    % recovery
-    for e=1:size(info{n},1)
-        [datar{n}(:,:,:,1,e),sir] = abfload([folder info{n}{e,3} '.abf'],'verbose',false);
-        [datar{n}(:,:,:,2,e),~ ] = abfload([folder info{n}{e,6} '.abf'],'verbose',false);
-    end
-    datar{n}(:,:,:,3,:) = datar{n}(:,:,:,1,:) - datar{n}(:,:,:,2,:);
-    datar{n}(:,2,:,3,:) = datar{n}(:,2,:,1,:);
-    datar{n}(:,[1 3],:,3,:) = lowpassf(datar{n}(:,[1 3],:,3,:),'Fpass',500,'Fstop',700,'Fs',1e6/si);
-    datar{n}(10001:end,:,:,:,:) = [];
     
     % inactivation
     [datai{n},si] = readsdata(folder,info{n}(:,[2 5]),1.15e4:1.66e4,1.15e4,5);
@@ -119,19 +109,6 @@ for n=1:length(neuron)
         ax.Title.String = info{n}{e,1};
     end
     legend(string(commandi{n}(1,:)))
-end
-
-%% Recovery current traces
-
-for n=1:length(neuron)
-    close(findobj(0,'Name', [neuron{n} ' subtractions recovery']))% 
-    fig = figure('Name',[neuron{n} ' subtractions recovery'],'NumberTitle','off');
-    for e=1:size(info{n},1)
-        ax = subplot(3,3,e);
-        plot(squeeze(datar{n}(:,3,:,3,e)))  
-        ax.YLim = [-30, 150];
-        ax.Title.String = info{n}{e,1};
-    end
 end
 
 %% passive properties
@@ -525,60 +502,6 @@ makesig(cta{1},paa(1),axs2(2))
 disp('Slope')
 [cta{1},paa(1)] = quickanova(Yiah(:,2),Yigh);
 makesig(cta{1},paa(1),axs2(3))
-
-
-% -------------- recovery  ---------------------------------
-axs3(1) = axes('Position',[0.7 0.05 0.10 0.4]);
-KAr = cell(1,3);
-KArp = cell(1,3);
-rfun = @(p,x) (1 - exp(-x./p(1)));
-opts = optimset('Display','off');
-rp0 = 0.05;
-for n=1:3
-    cnt = 1;
-    for e=1:size(info{n},1)
-        if ~(n==1 && e<4)
-            datasub = squeeze(datar{n}(:,2,:,3,e));
-            datasub = reshape(datasub,numel(datasub),1);
-            logic = logg((datasub>-35)+1);
-            pt = strfind(logic,repelem('01',3));
-            dur = arrayfun(@(x) sum(datasub(x-3500:x)<-60),pt)/1e4;
-            times = pt + 175 + 200*((n==3)+0);
-            datasubv = squeeze(datar{n}(:,3,:,3,e));
-            maxI = data{n}(4126 + 175 + 200*((n==3)+0),1,find(command{n}(e,:)==-10),3,e);
-            offs = min(datasubv(times));
-            KAr{n}(cnt,:) = (datasubv(times) - offs)/(maxI - offs);
-            KArp{n}(cnt,:) = lsqcurvefit(rfun,rp0,dur,KAr{n}(cnt,:),0,60,opts);
-
-%             scatter(dur,KAr{n}(cnt,:),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
-%             plot(0:0.01:0.2,rfun(KArp{n}(cnt,:),0:0.01:0.2),'Color',colorss(n,:));hold on
-            cnt = cnt+1;
-        end
-    end
-    err = nanstd(KAr{n})/sqrt(size(KAr{n},1));
-    err = [-err;err] + nanmean(KAr{n});
-    plot(repmat(dur,2,1),err,'Color',colorss(n,:));hold on
-    scatter(dur,mean(KAr{n}),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
-    plot(0:0.01:0.2,rfun(mean(KArp{n}),0:0.01:0.2),'Color',colorss(n,:));hold on
-end
-
-
-
-
-axs3(2) = axes('Position',[0.85 0.05 0.12 0.4]);
-colorss = [0.5,0,0;0,0.5,0;0,0,0.5];
-for n=1:3
-    scatter(ones(size(KArp{n},1),1)*n,KArp{n},20,'d',...
-        'MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
-    Yp = prctile(KArp{n},[25 50 75]);
-    rectangle('Position',[n - 0.25 , Yp(1) , 0.5, Yp(3) - Yp(1)],'EdgeColor',colorss(n,:)); hold on
-    plot([n-0.25 , n+0.25],[Yp(2) Yp(2)],'Color',colorss(n,:))
-end
-axs3(2).YLabel.String = 'Time constant (s)';
-axs2(2).XTick = 1:3;
-axs2(2).XTickLabel = ["B51","B64","B8"];
-axs2(2).XLim = [0.2 3.8];
-
 
 
 

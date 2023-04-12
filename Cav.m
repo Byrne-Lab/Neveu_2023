@@ -1,8 +1,5 @@
-folder = '\\uthsch-nas.uthouston.edu\ms_nba\ByrneLab\cneveu\Data\2019\';
-if strcmp(getenv('COMPUTERNAME'),'MSNBA160674') || strcmp(getenv('COMPUTERNAME'),'MSNBA-C000045')
-%     folder = 'C:\Users\cneveu\Desktop\Data\2019\';
-    folder = 'C:\Users\cneveu\My Drive\Data\2019\';
-end
+
+folder = 'C:\Users\cneveu\Documents\Data\';
 
 neuron = ["B51","B64","B8"];
 info=cell(1,3);
@@ -16,7 +13,7 @@ for n=1:length(neuron)
 %     [~,~,info{n}] = xlsread([folder 'Ltype.xlsx'],[neuron{n},'_old']);
     [~,~,info{n}] = xlsread([folder 'Ltype.xlsx'],neuron{n});
     info{n} = info{n}(2:end,2:end);
-    info{n} = cellfun(@num2str,info{n},'UniformOutput',false);
+    info{n} = cellfun(@num2str,info{n},'UniformOutput',false);keyboard
 
     [data{n},si,command{n}] = readsdata(folder,info{n}(:,1:2),1:1e4,4.5e3);
 
