@@ -1,12 +1,7 @@
-% folder = '\\uthsch-nas.uthouston.edu\ms_nba\ByrneLab\cneveu\Data\2019\';
-if strcmp(getenv('COMPUTERNAME'),'MSNBA160674') || strcmp(getenv('COMPUTERNAME'),'MSNBA-C000045')
-%     folder = 'C:\Users\cneveu\Desktop\Data\2019\';
-%     folder = 'D:\Data\2019\';
-%     folder = 'E:\external_drive\Data\2019\';
-%     folder = 'F:\Data\2019\';
-    folder = 'C:\Users\cneveu\My Drive\Data\2019\';
-end
-% folder = 'E:\external_drive\Data\2019\';
+
+% folder = 'Data\';% the 
+
+folder = 'D:\Data\2019\';
 
 neuron = ["B51","B64","B8"];
 info=cell(1,3);
@@ -238,7 +233,7 @@ for n=1:3
         axp = subplot(2,ceil(length(expp)/2),cnt);
         cnt=cnt+1;
         for t=1:size(data{n},3)
-            plt(t) = plot(X2,data{n}(fW3,2,t,3,e),'Color',colors(t,:));hold on
+            plt(t) = plot(X2,data{n}(fW3,1,t,3,e),'Color',colors(t,:));hold on
             plot(X,fun(KAp{n}(e,t,:),X),'Color',dcolors(t,:),'LineWidth',2);hold on
         end
         axp.Title.String = info{n}{e,1};
