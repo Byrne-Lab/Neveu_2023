@@ -1,5 +1,5 @@
 
-folder = 'C:\Users\cneveu\Documents\Data\';
+folder = 'D:\Data\2019\';
 
 neuron = ["B51","B64","B8"];
 info=cell(1,3);
@@ -13,7 +13,7 @@ for n=1:length(neuron)
 %     [~,~,info{n}] = xlsread([folder 'Ltype.xlsx'],[neuron{n},'_old']);
     [~,~,info{n}] = xlsread([folder 'Ltype.xlsx'],neuron{n});
     info{n} = info{n}(2:end,2:end);
-    info{n} = cellfun(@num2str,info{n},'UniformOutput',false);keyboard
+    info{n} = cellfun(@num2str,info{n},'UniformOutput',false);
 
     [data{n},si,command{n}] = readsdata(folder,info{n}(:,1:2),1:1e4,4.5e3);
 
@@ -42,6 +42,14 @@ end
 disp('>>>> finished reading data <<<<<')
 
 %data{1}(:,[1 3],end,:,3) = nan;
+
+save('CaL','datai','data','command','commandi','datac','info','si');
+
+%% load data
+
+neuron = ["B51","B64","B8"];
+
+load('CaL','datai','data','command','commandi','datac','info','si');
 
 %% Activation current traces
 s=3;

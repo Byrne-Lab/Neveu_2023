@@ -1,74 +1,83 @@
-% folder = '\\uthsch-nas.uthouston.edu\ms_nba\ByrneLab\cneveu\Data\2019\';
-if strcmp(getenv('COMPUTERNAME'),'MSNBA160674') || strcmp(getenv('COMPUTERNAME'),'MSNBA-C000045')
-%     folder = 'C:\Users\cneveu\Desktop\Data\2019\';
-%     folder = 'F:\Data\2019\';
-    folder = 'C:\Users\cneveu\My Drive\Data\2019\';
-end
+% 
+% folder = 'D:\Data\2019\';
+% 
+% neuron = ["B51","B64","B8"];
+% info=cell(1,3);
+% data = cell(1,3);
+% command = cell(1,3);
+% commandi = cell(1,3);
+% datac = cell(1,3);
+% datai = cell(1,3);
+% mv = -40:10:20;
+% for n=1:length(neuron)
+% %     [~,~,info{n}] = xlsread([folder 'Ltype.xlsx'],[neuron{n},'_old']);
+%     [~,~,info{n}] = xlsread([folder 'Rtype.xlsx'],neuron{n});
+%     info{n} = info{n}(2:end,2:end);
+%     info{n} = cellfun(@num2str,info{n},'UniformOutput',false);
+% 
+%     [data{n},si,command{n}] = readsdata(folder,info{n}(:,1:2),1:1e4,4.5e3);
+% 
+%     data{n}(:,[1 3],:,3,:) = data{n}(:,[1 3],:,3,:) - repmat(data{n}(:,[1 3],1,3,:),1,1,size(data{n},3),1,1);% subtracts -40 current trace
+%     data{n}(:,[1 3],:,3,:) = lowpassf(data{n}(:,[1 3],:,3,:),'Fpass',300,'Fstop',500,'Fs',1e6/si);
+%     
+%     
+%     mvidx = arrayfun(@(x) find(nanmean(command{n},1)==x),mv);
+%     data{n} = data{n}(:,:,mvidx,:,:);
+%     command{n} = command{n}(:,mvidx);
+%     
+%     if n>1
+%         dta = readpass(folder,info{n}(:,4:6)); 
+%     else
+%         dta = readpass(folder,info{n}(:,3:5));
+%     end
+%     datac{n} = dta(:,:,:,1);
+%     
+%     % inactivation
+%     logi = ~ismember(info{n}(:,3),{'NaN'});
+%     if any(logi)
+%         if n>1
+%             [id,si] = readsdata(folder,info{n}(logi,3),1.6e4:1.999e4,1.6e4,10);%1.6e4
+%             datai{n}(:,:,:,:,logi) = id;
+%             datai{n}(:,[1 3],:,3,logi) = lowpassf(id(:,[1 3],:,3,:),'Fpass',500,'Fstop',700,'Fs',1e6/si);
+%             commandi{n} = round(squeeze(datai{n}(find(logi,1),2,:,1,:))'/10)*10;
+%         else
+%             [~,~,info51] = xlsread([folder 'Ltype.xlsx'],'B51');
+%             info51 = info51(2:end,2:end);
+%             info51 = cellfun(@num2str,info51,'UniformOutput',false);
+%             [id,si] = readsdata(folder,info51(:,7),1.6e4:1.999e4,1.6e4,10);%1.6e4
+%             datai{n} = id;
+%             datai{n}(:,[1 3],:,3,:) = lowpassf(id(:,[1 3],:,3,:),'Fpass',500,'Fstop',700,'Fs',1e6/si);
+%             commandi{n} = round(squeeze(datai{n}(1,2,:,1,:))'/10)*10;
+%         end
+%     end
+% %     cont = mean(datai{n}(2200:2300,[1 3],end,:,:));
+% %     cont = repmat(cont,1,1,size(datai{n},3),1,1);
+%     cont = repmat(datai{n}(:,[1 3],end,:,:),1,1,size(datai{n},3),1,1);
+%     datai{n}(:,[1 3],:,:,:) = datai{n}(:,[1 3],:,:,:) - cont;
+% end
+% 
+% xpos = [0,600,1200];
+% ypos = [0,250,500];
+% small = [600,420];
+% big = [1000,9000];
+% 
+% disp('>>>> finished reading data <<<<<')
+% 
+% %data{1}(:,[1 3],end,:,3) = nan;
+% 
+% 
+% save('CaR','datai','data','command','commandi','datac','info','si');
 
+%% load data
 
 neuron = ["B51","B64","B8"];
-info=cell(1,3);
-data = cell(1,3);
-command = cell(1,3);
-commandi = cell(1,3);
-datac = cell(1,3);
-datai = cell(1,3);
-mv = -40:10:20;
-for n=1:length(neuron)
-%     [~,~,info{n}] = xlsread([folder 'Ltype.xlsx'],[neuron{n},'_old']);
-    [~,~,info{n}] = xlsread([folder 'Rtype.xlsx'],neuron{n});
-    info{n} = info{n}(2:end,2:end);
-    info{n} = cellfun(@num2str,info{n},'UniformOutput',false);
-
-    [data{n},si,command{n}] = readsdata(folder,info{n}(:,1:2),1:1e4,4.5e3);
-
-    data{n}(:,[1 3],:,3,:) = data{n}(:,[1 3],:,3,:) - repmat(data{n}(:,[1 3],1,3,:),1,1,size(data{n},3),1,1);% subtracts -40 current trace
-    data{n}(:,[1 3],:,3,:) = lowpassf(data{n}(:,[1 3],:,3,:),'Fpass',300,'Fstop',500,'Fs',1e6/si);
-    
-    
-    mvidx = arrayfun(@(x) find(nanmean(command{n},1)==x),mv);
-    data{n} = data{n}(:,:,mvidx,:,:);
-    command{n} = command{n}(:,mvidx);
-    
-    if n>1
-        dta = readpass(folder,info{n}(:,4:6)); 
-    else
-        dta = readpass(folder,info{n}(:,3:5));
-    end
-    datac{n} = dta(:,:,:,1);
-    
-    % inactivation
-    logi = ~ismember(info{n}(:,3),{'NaN'});
-    if any(logi)
-        if n>1
-            [id,si] = readsdata(folder,info{n}(logi,3),1.6e4:1.999e4,1.6e4,10);%1.6e4
-            datai{n}(:,:,:,:,logi) = id;
-            datai{n}(:,[1 3],:,3,logi) = lowpassf(id(:,[1 3],:,3,:),'Fpass',500,'Fstop',700,'Fs',1e6/si);
-            commandi{n} = round(squeeze(datai{n}(find(logi,1),2,:,1,:))'/10)*10;
-        else
-            [~,~,info51] = xlsread([folder 'Ltype.xlsx'],'B51');
-            info51 = info51(2:end,2:end);
-            info51 = cellfun(@num2str,info51,'UniformOutput',false);
-            [id,si] = readsdata(folder,info51(:,7),1.6e4:1.999e4,1.6e4,10);%1.6e4
-            datai{n} = id;
-            datai{n}(:,[1 3],:,3,:) = lowpassf(id(:,[1 3],:,3,:),'Fpass',500,'Fstop',700,'Fs',1e6/si);
-            commandi{n} = round(squeeze(datai{n}(1,2,:,1,:))'/10)*10;
-        end
-    end
-%     cont = mean(datai{n}(2200:2300,[1 3],end,:,:));
-%     cont = repmat(cont,1,1,size(datai{n},3),1,1);
-    cont = repmat(datai{n}(:,[1 3],end,:,:),1,1,size(datai{n},3),1,1);
-    datai{n}(:,[1 3],:,:,:) = datai{n}(:,[1 3],:,:,:) - cont;
-end
 
 xpos = [0,600,1200];
 ypos = [0,250,500];
 small = [600,420];
 big = [1000,9000];
 
-disp('>>>> finished reading data <<<<<')
-
-%data{1}(:,[1 3],end,:,3) = nan;
+load('CaR','datai','data','command','commandi','datac','info','si');
 
 %% Activation current traces
 s=3;
