@@ -106,11 +106,8 @@ for n=1:length(neuron)
     fig = figure('Name',[neuron{n} ' subtractions'],'NumberTitle','off');
     for e=1:size(info{n},1)
         ax = subplot(2,4,e);
-%         plot(400:0.1:1000,squeeze(mean(data{n}(4000:10000,1,:,3,:),5))) 
         Y = squeeze(data{n}(4000:10000,1,:,3,e)) - squeeze(NiCdn{n}(4000:10000,1,:,1,e));
         plot(400:0.1:1000,Y)  
-%         ax.YLim = [-40, 250];
-%         ax.YLim = [-50, 50];
         ax.YLim = [-50, 180];
         ax.XLabel.String = 'Time (ms';
         ax.Title.String = info{n}{e,1};%['Pre: ', num2str(info{e,3}), ', Post: ', num2str(info{e,4}),', Pre: ', num2str(info{e,5})];
@@ -140,10 +137,7 @@ for n=1:length(neuron)
         
         plot(mY,'Color',dcolors(t-3,:));hold on 
     end
-    
-        ax.YLim = [-10, 180];
-%     ax.YLim = [-90, 150];
-%     ax.Title.String = info{n}{e,1};%['Pre: ', num2str(info{e,3}), ', Post: ', num2str(info{e,4}),', Pre: ', num2str(info{e,5})];
+    ax.YLim = [-10, 180];
 end
 
 
@@ -160,7 +154,6 @@ Yg = cell(0,1);
 YaA = zeros(0,2);
 for n=1:3
     Ys = squeeze(mean(sdata{n}(9200:9301,1,6,1,:)));
-%     Ys(Ys<0) = 0;
     Ya = [Ya;Ys]; %#ok<AGROW>
     Yg = [Yg;repmat(names(n),length(Ys),1)];%#ok<AGROW>
     scatter(ones(size(Ys))*n, Ys,20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on

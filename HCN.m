@@ -170,29 +170,22 @@ bfun = @(p,x) 1./(1+exp((x - p(1))/p(2)));
 bp0 = [-80, 10];
 KAap = cell(1,3);
 
-%     scatter(command{n}(:)+n-2,KAa{n}(:),20,'d','MarkerFaceColor',colors(n,:),'MarkerEdgeColor',colors(n,:));hold on
 Yy = KAa{n}(:,:,s);
-%     Yy = Yy - repmat(min(KAa{n}(:,:,s),[],2),1,size(Yy,2));
 iqr = prctile(Yy,[25 75]);
 err = nanstd(Yy)/sqrt(size(KAa{n},1));
 err = [-err;err] + nanmean(Yy);
 
 Xx = nanmean(command{n}(:,:))+n-2;
-%     scatter(Xx,nanmean(Yy),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
-%     plot(repmat(Xx,2,1),err,'Color',colorss(n,:));hold on
 for e=1:size(DKp{n},1)
     isn = ~isnan(KAa{n}(e,:,s));
     Xc = command{n}(e,isn);
     Y = Yy(e,isn);
     KAap{n}(e,:) = lsqcurvefit(bfun,bp0,Xc,Y,[-inf,-inf],[inf,inf],opts);
-%         plot(-60:20,bfun(KAap{n}(e,:),-60:20),'Color',colors(e,:));hold on
-%         scatter(command{n}(e,:)+n,KAa{n}(e,:),20,'d','MarkerFaceColor',colors(e,:),'MarkerEdgeColor',colors(e,:));hold on
 end
 scatter(Xx,abs(nanmean(Yy)),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
 plot(repmat(Xx,2,1),err,'Color',colorss(n,:));hold on
 plot(-120:-40,bfun(mean(KAap{n}),-120:-40),'Color',colorss(n,:));hold on
 
-% legend(aplt,names,'Location','southeast')
 axs1.YLim = [0 1];
 axs1.Title.String = 'Activation Curve';
 axs1.YLabel.String = 'Activation';
@@ -244,7 +237,6 @@ iqr = prctile(Yd,[25 75]);
 err = nanstd(DKp{n}(:,:,2))./sqrt(sum(~isnan(Yd)));
 Ye = [Ym + err;Ym - err];
 xt = nanmean(command{n});
-%     scatter(xt(:),Yd(:),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
 plot(repmat(xt,2,1)+n-2,Ye,'Color',colorss(n,:));hold on
 scatter(xt+n-2,nanmean(Yd),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
 
@@ -262,9 +254,7 @@ for e=1:size(DKp{n},1)
         atp{n}(e,5) = sum(atp{n}(e,[3 5]));
     end
 end
-% tfun = @(p,x) (p(1) - p(2))./(1+exp((x - p(3))/-p(4)))./(1+exp((x - p(5))/p(4))) + p(2);
 tfun = @(p,x) (p(1) - p(2))./(1+exp((x - p(3))/-p(4)))./(1+exp((x - p(5))/p(4))) + p(2);
-% plot(-120:-30,tfun(nanmedian(atp{n}),-120:-30),'Color',colorss(n,:));hold on
 plot(-120:-30,tfun([14 0.9 -73 9 -75],-120:-30),'Color',colorss(n,:));hold on
 
 % legend(atplt,neuron)
@@ -282,8 +272,7 @@ axs43(2) = axes('Position',[0.51 0.05  0.09 0.4]);
 axs43(3) = axes('Position',[0.63 0.05  0.09 0.4]);
 axs43(4) = axes('Position',[0.75 0.05  0.09 0.4]);
 axs43(5) = axes('Position',[0.87 0.05  0.09 0.4]);
-YiaA = zeros(0,3);%DKp{n}(e,t,:,s)
-% ylab = ["Maximum Tau (s)","Minimum Tau (s)","Half activation (mV)","Slope"];
+YiaA = zeros(0,3);
 ylab = ["Maximum Tau (s)","Minimum Tau (s)","h1 (mV)","Slope","h2 (mV)"];
 for n=1:length(neuron)
     for p=1:size(atp{n},2)

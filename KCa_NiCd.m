@@ -179,9 +179,6 @@ X2 = [fliplr(-X(1:bln)) , X];
 
 colors = makecolor;
 dcolors = makecolor(-0.3);
-% fun = @(p,x) p(1).*(1 - exp(-x/p(2))).*exp(-x/p(3)) + p(4);
-% fun = @(p,x) p(1).*exp(-x/p(2)) + p(3);
-% fun = @(p,x) p(1).*exp(-x/p(2));
 for n=1:3
     close(findobj(0,'Name', [neuron{n} 'fits']))% 
     figure('Name',[neuron{n} 'fits'],'NumberTitle','off','Position',[50+(n-1)*560 132 560 770]);
@@ -221,13 +218,9 @@ bp0 = [-10, 1];
 KAap = cell(1,3);
 aplt = gobjects(1,3);
 for n=1:3
-%     scatter(command{n}(:)+n-2,KAa{n}(:),20,'d','MarkerFaceColor',colors(n,:),'MarkerEdgeColor',colors(n,:));hold on
     iqr = prctile(KAa{n},[25 75]);
     err = nanstd(KAa{n})/sqrt(size(KAa{n},1));
     err = [-err;err] + nanmean(KAa{n});
-%     fx = [command{n}(1,:) fliplr(command{n}(1,:))];
-%     fy = [err(1,:) fliplr(err(2,:))];
-%     fill(fx,fy,colors(n,:),'EdgeColor','none','FaceAlpha',0.5);hold on
 
     Xx = command{n}(1,:)+n-2;
     scatter(Xx,nanmean(KAa{n}),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
@@ -237,8 +230,6 @@ for n=1:3
         X = command{n}(e,isn);
         Y = KAa{n}(e,isn);
         KAap{n}(e,:) = lsqcurvefit(bfun,bp0,X(2:end),Y(2:end),[-inf,-inf],[inf,inf],opts);
-%         plot(-60:20,bfun(KAap{n}(e,:),-60:20),'Color',colors(e,:));hold on
-%         scatter(command{n}(e,:)+n,KAa{n}(e,:),20,'d','MarkerFaceColor',colors(e,:),'MarkerEdgeColor',colors(e,:));hold on
     end
     aplt(n) = plot(-80:20,bfun(mean(KAap{n}),-80:20),'Color',colorss(n,:));hold on
 end
@@ -264,24 +255,14 @@ for n=1:3
         axes(axs1(p))
         scatter(ones(size(KAap{n},1),1)*n,KAap{n}(:,p),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
         Yp = prctile(KAap{n}(:,p),[25 50 75]);
-%         Yr = prctile(Yp,[5 95]);
-%         plot([n , n],Yr,'Color',colorss(n,:));
         rectangle('Position',[n - 0.25 , Yp(1) , 0.5, Yp(3) - Yp(1)],'EdgeColor',colorss(n,:)); hold on
         plot([n-0.25 , n+0.25],[Yp(2) Yp(2)],'Color',colorss(n,:))
     end
     axes(axs1(3))
-%     YaA = [YaA; KAp{n}(:,end,1)./pass{n}(:,6)];
-%     scatter(ones(size(KAp{n},1),1)*n, KAp{n}(:,end,1)./pass{n}(:,6),20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
-%     Yp = prctile(KAp{n}(:,end,1)./pass{n}(:,6),[25 50 75]);
-%     rectangle('Position',[n - 0.25 , Yp(1) , 0.5, Yp(3) - Yp(1)],'EdgeColor',colorss(n,:)); hold on
-%     plot([n-0.25 , n+0.25],[Yp(2) Yp(2)],'Color',colorss(n,:))
-%     Ys = KAp{n}(:,end,1)/(command{n}(1,end) +70);%./pass{n}(:,6);
     Ys = KAp{n}(:,end,1)/(command{n}(1,end) +70);%./pass{n}(:,6);
     YaA = [YaA; Ys];
     scatter(ones(size(Ys))*n, Ys,20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
     Yp = prctile(Ys,[25 50 75]);
-%     Yr = prctile(Ys,[5 95]);
-%     plot([n , n],Yr,'Color',colorss(n,:));
     rectangle('Position',[n - 0.25 , Yp(1) , 0.5, Yp(3) - Yp(1)],'EdgeColor',colorss(n,:)); hold on
     plot([n-0.25 , n+0.25],[Yp(2) Yp(2)],'Color',colorss(n,:));
 end 
@@ -324,7 +305,6 @@ for n=1:length(neuron)
     idx = 6:9;
     Ya = KAp{n}(:,idx,3);
     Xx = command{n}(1,idx);
-%     scatter(command{n}(:)+n-2,KAa{n}(:),20,'d','MarkerFaceColor',colors(n,:),'MarkerEdgeColor',colors(n,:));hold on
     iqr = prctile(Ya,[25 75]);
     err = nanstd(Ya)/sqrt(size(KAp{n},1));
     err = [-err;err] + 1-nanmean(Ya);
@@ -337,13 +317,10 @@ for n=1:length(neuron)
         Xc = [-60, Xx(isn)];
         Yi = [1, 1-Ya(e,isn)];
         KAiap{n}(e,:) = lsqcurvefit(bfun,bp0,Xc,Yi,[-inf,-inf,0],[inf,inf,1],opts);
-%         plot(-60:20,bfun(KAap{n}(e,:),-60:20),'Color',colors(e,:));hold on
-%         scatter(command{n}(e,:)+n,KAa{n}(e,:),20,'d','MarkerFaceColor',colors(e,:),'MarkerEdgeColor',colors(e,:));hold on
     end
     iaplt(n) = plot(-80:20,bfun(mean(KAiap{n}),-80:20),'Color',colorss(n,:),'LineStyle','--');hold on
 end
 legend(iaplt,names,'Location','northwest')
-% legend(iaplt,names,'Location','southeast')
 axs2(1).Title.String = 'Inactivation Curve';
 axs2(1).YLabel.String = 'B';
 axs2(1).XLabel.String = 'Command potential (mV)';
@@ -419,7 +396,6 @@ for n=1:length(neuron)
     Ye = [Ym + err;Ym - err];
     plot(command{n}(1:2,idx)+n-2,Ye,'Color',colorss(n,:));hold on
     scatter(command{n}(1,idx)+n-2,Ym,20,'d','MarkerFaceColor',colorss(n,:),'MarkerEdgeColor',colorss(n,:));hold on
-%     atplt(n) = plot(-80:30,tfun(median(atp{n}),-80:30),'Color',colorss(n,:));hold on
     switch n
         case 1
             atplt(n) = plot(-80:30,tfun([0.8 0.08 18 2 20],-80:30),'Color',colorss(n,:));hold on
@@ -447,7 +423,6 @@ for n=3%1:length(neuron)
         scatter(command{n}(1,idx),Y,20,'d','MarkerFaceColor',colors(e,:),'MarkerEdgeColor',colors(e,:));hold on
     end
     plot(command{n}(1,idx),mean(KAp{n}(:,idx,2)))
-%     plot(-60:20,tfun())
 end
 
 
