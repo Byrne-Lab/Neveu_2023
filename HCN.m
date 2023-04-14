@@ -1,46 +1,40 @@
-folder = '\\uthsch-nas.uthouston.edu\ms_nba\ByrneLab\cneveu\Data\2019\';
-if strcmp(getenv('COMPUTERNAME'),'NBA-BLAB7730NB') || strcmp(getenv('COMPUTERNAME'),'MSNBA-C000045')
-%     folder = 'C:\Users\cneveu\Desktop\Data\B8_data-HMC\';
-%     folder = 'C:\Users\cneveu\My Drive\Data\B8_data-HMC\';
-    folder = 'D:\Data\B8_data-HMC\';
-end
+
+% folder = 'D:\Data\B8_data-HMC\';
+% 
+% neuron = ["B51","B64","B8"];
+% info=cell(1,3);
+% data = cell(1,3);
+% 
+% n = 3;
+% 
+% vrange = [-110 , -60];
+% % vrange = [-110 , -30];
+% 
+% [~,~,info{n}] = xlsread([folder 'HCN.xlsx'],neuron{n});
+% info{n} = info{n}(2:end,2:end);
+% info{n} = cellfun(@num2str,info{n},'UniformOutput',false);
+% 
+% [data{n},si,command{n}] = readsdata(folder,info{n}(:,1),1:1.5e5,4e4,10,[2 1]);
+% 
+% vcom = nanmean(command{n});
+% sel = vcom>=vrange(1) & vcom<=vrange(2);
+% command{n} = command{n}(:,sel);
+% data{n}(:,:,~sel,:,:) = [];
+% vcom(~sel) = [];
+% 
+% data{n}(:,1,:,1,:) = lowpassf(data{n}(:,1,:,1,:),'Fpass',120,'Fstop',300,'Fs',1e6/si);
+% data{n} = data{n} - repmat(mean(data{n}(10000:11000,:,:,:,:)),length(data{n}),1,1,1,1);
+% leak = max(data{n}(25500:27000,1,:,1,:));
+% 
+% save('HCN.mat','data','command','info','si');
+
+%% load data
 
 neuron = ["B51","B64","B8"];
-info=cell(1,3);
-data = cell(1,3);
-
 n = 3;
-
-vrange = [-110 , -60];
-% vrange = [-110 , -30];
-
-[~,~,info{n}] = xlsread([folder 'HCN.xlsx'],neuron{n});
-info{n} = info{n}(2:end,2:end);
-info{n} = cellfun(@num2str,info{n},'UniformOutput',false);
-
-[data{n},si,command{n}] = readsdata(folder,info{n}(:,1),1:1.5e5,4e4,10,[2 1]);
-
-vcom = nanmean(command{n});
-sel = vcom>=vrange(1) & vcom<=vrange(2);
-command{n} = command{n}(:,sel);
-data{n}(:,:,~sel,:,:) = [];
-vcom(~sel) = [];
-
-data{n}(:,1,:,1,:) = lowpassf(data{n}(:,1,:,1,:),'Fpass',120,'Fstop',300,'Fs',1e6/si);
-data{n} = data{n} - repmat(mean(data{n}(10000:11000,:,:,:,:)),length(data{n}),1,1,1,1);
-leak = max(data{n}(25500:27000,1,:,1,:));
+load('HCN.mat','data','command','info','si');
 
 
-% load('C:\Users\cneveu\My Drive\MATLAB\modeling\HCN.mat')
-
-% data{n}(25000:65030,1,:,1,1) = data{n}(25000:65030,1,:,1,1) - repmat(leak(:,:,:,1),65030-25000+1,1,1,1,1);
-% data{n}(25000:85030,1,:,1,2:end) = data{n}(25000:85030,1,:,1,2:end) - repmat(leak(:,:,:,:,2:end),85030-25000+1,1,1,1,1);
-% 
-% idx = find(~isnan(data{n}(65200,1,:,1,1)),1,'last');
-% data{n}(65030:73030,1,:,1,1) = data{n}(65030:73030,1,:,1,1) - repmat(nanmax(data{n}(65200:67100,1,idx,1,1)),73030 - 65030+1,1,size(data{n},3),1,1);
-% idx = find(~isnan(data{n}(85200,1,:,1,2)),1,'last');
-% data{n}(85030:93030,1,:,1,2) = data{n}(85030:93030,1,:,1,2) - repmat(nanmax(data{n}(85200:87100,1,idx,1,2)),93030 - 85030+1,1,size(data{n},3),1,1);
-% data{n}(85030:89030,1,:,1,3:end) = data{n}(85030:89030,1,:,1,3:end) - repmat(nanmax(data{n}(85200:87100,1,end,1,3:end)),89030 - 85030+1,1,size(data{n},3),1,1);
 %% Activation current traces
 s=1;
 colors = makecolor;
